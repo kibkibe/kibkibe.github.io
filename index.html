@@ -5,8 +5,11 @@
 	<title>Roll20 API Scripts by YANGSALT</title>
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 	<script>
-
         $(function() {
+			let tempDiv = $('#tempDiv');
+			tempDiv.load("https://raw.githubusercontent.com/kibkibe/roll20-api-scripts/master/utilities/temporary_chat.js");
+			let html = tempDiv.find('#theParagraphId').html();
+			$('#text').html(html);
 
             $("p").on("click", function() {
 
