@@ -102,8 +102,8 @@ $(function() {
 		const item = menuMap[i];
 		listString += "<li><input id=\"" + item.name + "\" refurl=\"https://raw.githubusercontent.com/kibkibe/roll20-api-scripts/master/"
 		+ (item.is_utility?"utilities":item.name) + "/" + item.name + ".js\" type=\"checkbox\"><label for=\""
-		+ item.name + "\"></label><label for=\"" + item.name + "\">" + "<b>"
-		+ item.name + ".js</b><br>" + item.desc + "</label><div class=\"opt\" style=\"display:none\">설정가능한 옵션이 표시될 예정입니다.</div><p></p></li>";
+		+ item.name + "\"></label><label for=\"" + item.name + "\">" + "<span>"
+		+ item.name + ".js</span><br>" + item.desc + "</label><div class=\"opt\" style=\"display:none\">설정가능한 옵션이 표시될 예정입니다.</div><p></p></li>";
 	}
 	$("#scriptList").html(listString);
 
