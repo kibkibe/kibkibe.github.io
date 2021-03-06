@@ -1,0 +1,68 @@
+html, body { min-height:100%; height: 100%; margin: 0px;font-family: 'Poppins', sans-serif;background:#eeeeee;}
+
+#root {width:100%; height: 100%;text-align:center;}
+#loader, #itemList {display:none;}
+#wrapper {text-align:left;display:inline-block;width:100%;max-width:1200px;
+	width: -moz-calc(100% - 80px); width: -webkit-calc(100% - 80px); width: -o-calc(100% - 80px); width: calc(100% - 80px);
+	height: -moz-calc(100% - 80px); height: -webkit-calc(100% - 80px); height: -o-calc(100% - 80px); height: calc(100% - 80px);margin:40px;}
+
+#input {width:40%;min-width:450px;display:inline-block;vertical-align:top;height:100%;overflow-y:scroll;
+	background:#ffffff; padding: 0px 20px 0px 20px;-ms-overflow-style: none;scrollbar-width: none;margin-right:50px;
+}
+#input::-webkit-scrollbar, #result::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+    background: #ffffff;
+  }
+#input::-webkit-scrollbar-thumb,#result::-webkit-scrollbar-thumb {
+border-radius: 3.5px;
+background-color: #dddddd;
+}
+#input::-webkit-scrollbar-track,#result::-webkit-scrollbar-track {
+background: #ffffff;
+}
+#output {
+	width:40%;min-width:490px;display:inline-block;vertical-align:top;height: 100%;}
+#result {
+	border: 0px; resize:none; width: -moz-calc(100% - 40px); width: -webkit-calc(100% - 40px); width: -o-calc(100% - 40px); width: calc(100% - 40px);
+	padding: 20px; height: -moz-calc(100% - 95px); height: -webkit-calc(100% - 95px); height: -o-calc(100% - 95px); height: calc(100% - 95px);
+	font-family: 'Poppins', sans-serif;}
+#copyBtn {display:block;width:100%;margin:0px;height:50px;border:0px;background-color: #444444;color:#ffffff;font-size:1.1em;}
+
+#copy {display:block;position:absolute;left:40px;top:17px;}
+#copy a { color:#444444; text-decoration: none;}
+
+ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+li {
+	margin: 20px 0px 20px 0px;}
+label {
+	display: inline-block;
+	width: 90%;
+	font-size: 0.8em;
+	color: #aaaaaa;
+	line-height: 1.5em;
+}
+label b {
+	color: #444444; font-size:1.5em;
+}
+input {
+	vertical-align: top; display:none;
+}
+input + label {
+	display: inline-block; width: 17px; height: 17px; border: 2px solid #bcbcbc; cursor: pointer;vertical-align:
+	top;margin-right:17px;text-align:center;
+}
+input:checked + label {
+	border: 2px solid #444444;
+}
+input:checked + label::after {
+	font-size: 2em;content:"✓";color:#444444;
+}
+
+.opt {
+	margin-left: 36px;
+}

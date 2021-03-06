@@ -3,26 +3,28 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Roll20 API Scripts by YANGSALT</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-	<script>
-        $(function() {
-			let tempDiv = $('#tempDiv');
-			tempDiv.load("https://raw.githubusercontent.com/kibkibe/roll20-api-scripts/master/utilities/temporary_chat.js");
-			let html = tempDiv.find('#theParagraphId').html();
-			$('#text').html(html);
-
-            $("p").on("click", function() {
-
-               $("p").css("color", "red");
-
-            });
-
-        });
-
-    </script>
+	<script src="script.js" type="application/javascript"></script>
 </head>
 <body>
-	<div id="tempDiv" style="display: none;"></div>
-	<p id="text"></p>
+	<div id="root">
+		<div id="wrapper">
+			<div id="input">
+				<ul id="scriptList">
+				</ul>
+			</div>
+			<div id="output">
+				<textarea id="result" readonly></textarea>
+				<input id="copyBtn" type="button" value="Copy">
+			</div>
+		</div>
+	</div>
+	<div id="loader">
+	</div>
+	<div id="copy"><a href="#">.by YANGSALT </a> <a target="_blank" href="https://twitter.com/trpg_kibkibe"> { Twitter</a> /
+		<a target="_blank" href="https://github.com/kibkibe/roll20-api-scripts">Github }</a></div>
 </body>
 </html>
