@@ -134,4 +134,11 @@ $(function() {
 			$(element).siblings("div").css("display","none")
 		}
 	});
+	$(":button").on("click",function(){
+		console.log('click');
+		const result = document.getElementById("result");
+		result.select();
+		result.setSelectionRange(0, 999999);
+		document.execCommand("copy");
+	})
 });
