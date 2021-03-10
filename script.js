@@ -30,7 +30,7 @@ const menuMap = [
 		desc:"우클릭으로 카드를 뒤집기 어려운 상황일 경우 명령어를 입력해서 대신 뒤집을 수 있도록 지원합니다."
 	},
 	{
-		name: "get_set_img_url",
+		name: "token_utility",
 		is_utility: true,
 		desc:"선택한 토큰의 이미지 주소를 확인 혹은 변경하거나 토큰의 상세정보를 열람하는 등 여러 기능들이 탑재되어 있습니다."
 	},
@@ -194,7 +194,6 @@ function setCookie() {
 }
 
 function selectedScript(checkbox) {
-	console.log(checkbox);
 	let checked = $(".scriptList").filter(":checked");
 	if ($(checkbox).prop("checked") && checkedScripts.indexOf(checkbox.id) == -1) {
 		checkedScripts += "//" + checkbox.id;
@@ -369,6 +368,9 @@ function selectedScript(checkbox) {
 }
 
 $(function() {
+	// !!! TEST VERSION CODE !!!
+	console.log(24);
+
 	let listString = "";
 	for (let i = 0; i < menuMap.length; i++) {
 		const item = menuMap[i];
@@ -379,14 +381,10 @@ $(function() {
 	}
 	$("#scriptList").html(listString);
 
-	// !!! TEST VERSION CODE !!!
-	console.log(23);
-
 	try {
 		const temp = document.cookie;
 		if (temp && temp.length > 0) {
 			let str = temp.split(/\s*;\s*/);
-			console.log(temp);
 			for (let index = 0; index < str.length; index++) {
 				const item = decodeURIComponent(str[index]);
 				if (item.indexOf("options=") == 0) {
