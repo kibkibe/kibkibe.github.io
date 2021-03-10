@@ -210,9 +210,9 @@ $(function() {
 			for (let index = 0; index < str.length; index++) {
 				const item = str[index];
 				if (item.indexOf("options=") == 0) {
-					options = JSON.parse(decodeURIComponent(str[0].replace('options=',"")));
+					options = JSON.parse(decodeURIComponent(item.replace('options=',"")));
 				} else if (item.indexOf("scripts=") == 0) {
-					checkedScripts = decodeURIComponent(str[1].replace('scripts=',"")).split("//");
+					checkedScripts = decodeURIComponent(item.replace('scripts=',"")).split("//");
 				}
 			}
 
