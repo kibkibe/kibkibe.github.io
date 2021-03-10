@@ -183,9 +183,14 @@ function applyOptions() {
 }
 
 function setCookie() {
-	console.log("options=" + encodeURIComponent(JSON.stringify(options))
-	+ ";scripts=" + encodeURIComponent(checkedScripts));
-	document.cookie = "scripts=" + encodeURIComponent(checkedScripts);
+	if (options.keys().length > 0) {
+		options = encodeURIComponent(JSON.stringify(options));
+	}
+	if (checkedScripts.length > 0) {
+		document.cookie = "scripts=" + encodeURIComponent(checkedScripts);
+	} else {
+		document.cookie = "scripts=expire;max-age=-1";
+	}
 }
 
 $(function() {
@@ -200,7 +205,7 @@ $(function() {
 	$("#scriptList").html(listString);
 
 	// !!! TEST VERSION CODE !!!
-	console.log(13);
+	console.log(14);
 
 	try {
 		const temp = document.cookie;
