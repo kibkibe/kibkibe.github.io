@@ -205,7 +205,7 @@ $(function() {
 	$("#scriptList").html(listString);
 
 	// !!! TEST VERSION CODE !!!
-	console.log(19);
+	console.log(20);
 
 	try {
 		const temp = document.cookie;
@@ -223,6 +223,7 @@ $(function() {
 						console.log(split[index]);
 						if (index == split.length -1) {
 							console.log("triggered!");
+							console.log($("#"+split[index]));
 							$("#"+split[index]).trigger("click");
 						} else {
 							$("#"+split[index]).prop("checked",true);
@@ -239,6 +240,7 @@ $(function() {
 	}
 
 	$(".scriptList").on("click",function(event){
+		console.log(event);
 		let checked = $(".scriptList").filter(":checked");
 		const checkbox = event.currentTarget;
 		if ($(checkbox).prop("checked") && checkedScripts.indexOf(checkbox.id) == -1) {
