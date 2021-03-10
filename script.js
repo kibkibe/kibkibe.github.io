@@ -197,7 +197,7 @@ function selectedScript(checkbox) {
 	console.log(checkbox);
 	let checked = $(".scriptList").filter(":checked");
 	if ($(checkbox).prop("checked") && checkedScripts.indexOf(checkbox.id) == -1) {
-		checkedScripts += "//" + event.currentTarget.id;
+		checkedScripts += "//" + checkbox.id;
 	} else if (!$(checkbox).prop("checked")  && checkedScripts.indexOf(checkbox.id) > -1) {
 		checkedScripts = checkedScripts.replace("//"+checkbox.id,"");
 	}
