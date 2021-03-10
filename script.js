@@ -380,7 +380,7 @@ $(function() {
 	$("#scriptList").html(listString);
 
 	// !!! TEST VERSION CODE !!!
-	console.log(21);
+	console.log(22);
 
 	try {
 		const temp = document.cookie;
@@ -395,12 +395,9 @@ $(function() {
 					checkedScripts = item.replace('scripts=',"");
 					const split = checkedScripts.split("//");
 					for (let index = 1; index < split.length; index++) {
-						console.log(split[index]);
+						$("#"+split[index]).prop("checked",true);
 						if (index == split.length -1) {
-							console.log("triggered!");
 							selectedScript($("#"+split[index]));
-						} else {
-							$("#"+split[index]).prop("checked",true);
 						}
 					}
 				}
