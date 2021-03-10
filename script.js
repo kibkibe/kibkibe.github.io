@@ -200,7 +200,7 @@ $(function() {
 	}
 	$("#scriptList").html(listString);
 
-	console.log(2);
+	console.log(3);
 
 	try {
 		if (document.cookie && document.cookie.length > 0) {
@@ -211,13 +211,13 @@ $(function() {
 					options = JSON.parse(decodeURIComponent(item.replace('options=',"")));
 				} else if (item.indexOf("scripts=") == 0) {
 					checkedScripts = decodeURIComponent(item.replace('scripts=',"")).split("//");
+					console.log(checkedScripts);
+					for (let index = 0; index < checkedScripts.length; index++) {
+						const element = checkedScripts[index];
+						console.log(element);
+						$(element).prop("checked",true);
+					}
 				}
-			}
-
-			for (let index = 0; index < checkedScripts.length; index++) {
-				const element = checkedScripts[index];
-				console.log(element);
-				$(element).prop("checked",true);
 			}
 		}
 	} catch (err) {
@@ -252,14 +252,18 @@ $(function() {
 					console.log('일시적인 오류가 발생했습니다.');
 					return;
 				}
-				string += "// " +element.getAttribute("refurl").substring(element.getAttribute("refurl").lastIndexOf("/")+1,
-				element.getAttribute("refurl").length)+"\n";
+				//string += "// " +element.getAttribute("refurl").substring(element.getAttribute("refurl").lastIndexOf("/")+1,
+				//element.getAttribute("refurl").length)+"\n";
 				jQuery.ajax({ 
 					url: element.getAttribute("refurl"), dataType: "text" 
 				}).done(function( responseTxt ) {
 					// 새 코드의 원본 획득
-					let script_name = responseTxt.match(/\w+\.js/);
-					if (script_name) script_name = script_name[0].replace(".js","");
+					let script_info = responseTxt.match(/\(\w+\.js\) \d{6}/);
+					let script_name = "";
+					if (script_info) {
+						string += "// " + script_info + "\n";
+						script_name = script_name[0].replace(/.js) \d{6}/,"").replace("(","");
+					}
 
 					// 영역 서랍에 들어가야 할 항목 탐색
 					const keys = Object.keys(areaList);
