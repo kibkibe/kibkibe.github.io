@@ -1,28 +1,29 @@
-// as_autofiller.js
-// as_switcher.js
-// attribute_tracker.js
-// avatar_setter.js
-// choice.js
-// flip_card.js
-// jukebox_amplifier.js
-// narrator.js
-// ruby_character.js
-// smallchat.js
-// smallchat_split.js
-// temporary_chat.js
-// token_scripter.js
-// visual_dialogue.js
-// magicalogia_install_magic.js
-// magicalogia_mana_token.js
-// magicalogia_match_dice.js
-// magicalogia_summon.js
+// (as_autofiller.js) 210306
+// (as_switcher.js) 210306
+// (attribute_tracker.js) 210306
+// (choice.js) 210306
+// (flip_card.js) 210306
+// (token_utility.js) 210306
+// (jukebox_amplifier.js) 210128
+// (narrator.js) 210306
+// (ruby_character.js) 210306
+// (smallchat.js) 210306
+// (smallchat_split.js) 210306
+// (temporary_chat.js) 210306
+// (token_scripter.js) 210306
+// (visual_dialogue.js) 210306
+// (magicalogia_install_magic.js) 210306
+// (magicalogia_mana_token.js) 210306
+// (magicalogia_match_dice.js) 210306
+// (magicalogia_summon.js) 210306
+// (avatar_setter.js) 210310
 
 // option
 const aa_setting = {
 	// 토큰을 선택하지 않고 명령어를 사용했을 때 기본적으로 표시될 캐릭터의 이름을 설정합니다.
 	master_name: "GM",
 	// 플레이어에게 권한이 있는 캐릭터도 자동선택의 대상에 포함할지(true) 제외할지(false) 설정합니다.
-	use_to_playable_character: true};
+	use_to_playable_character: false};
 	const as_setting = {
 	// 토큰을 선택하지 않고 명령어를 사용했을 때 기본적으로 표시될 캐릭터의 이름을 기입해주세요.
 	master_name: "GM"};
@@ -47,6 +48,9 @@ const aa_setting = {
 	// 로그 표시에서 제외할 캐릭터의 이름을 기입합니다. (복수입력시 콤마(,)로 구분)
 	// "GM"을 넣으면 GM에게만 조작권한이 있는 모든 캐릭터를 일괄적으로 제외합니다.
 	ignore_list: "GM"};
+	const gi_setting = {
+	// 강조표시에 사용할 색상을 설정합니다.
+	aura_color: "#FFFF99"};
 	const nt_setting = {
 	// 대화를 표시하는 시간 간격을 조절합니다. 밀리초 단위로서 1000 = 1초입니다.
 	interval: 3000};
@@ -57,15 +61,15 @@ const aa_setting = {
 	// 채팅창의 글씨크기를 지정합니다.
 	font_size: 14,
 	// 채팅창의 글씨색을 지정합니다.
-	color: rgb(255, 255, 255)",
+	color: "rgb(255, 255, 255)",
 	// 채팅창의 상하좌우 여백을 설정합니다.
 	margin: 5,
 	// 채팅로그에 플레이어/PC 중 어느쪽 이름을 표시할지 지정합니다. (true:플레이어/false:PC)
 	show_player_name: false,
 	// 잡담 내역을 저장할 핸드아웃의 이름을 지정합니다.
-	logname: '(잡담로그)',
+	logname: "(잡담로그)",
 	// 세션화면 안에 채팅창을 만들지 않고자 할 경우 실시간 채팅을 표시할 별도의 핸드아웃의 이름을 지정합니다.
-	onair_name: '(실시간 잡담채팅)',
+	onair_name: "(실시간 잡담채팅)",
 	// 실시간 채팅용 핸드아웃에서 최신순으로 몇개까지 채팅을 표시할지를 지정합니다.
 	onair_lines: 15,
 	// 핸드아웃에 저장되는 채팅로그에 플레이어의 고유색상을 적용할지의 여부를 설정합니다
@@ -480,34 +484,6 @@ const aa_setting = {
 				state.show_tracking = true;
 			}
 		}
-		else 	if (msg.content.indexOf("!avatar ") == 0) {
-			try {
-				let split = msg.content.split(/\s*--\s*/);
-				if (split.length != 3) {
-					sendChat("error", "/w \"" + msg.who + "\" 형식이 올바르지 않습니다. 아래의 형식으로 입력해주세요.<br>**!avatar --캐릭터이름 --주소**<br>*(이 안내메시지는 로그에 저장되지 않습니다.)*",null,{noarchive:true});
-					return;
-				}
-				let chat_cha = findObjs({ _type: 'character', name: split[1]});
-				if (chat_cha.length == 0) {
-					sendChat("error", "/w \"" + msg.who + "\" 이름이 **" + split[1] + "**인 캐릭터가 저널에 없습니다. *(이 안내메시지는 로그에 저장되지 않습니다.)*",null,{noarchive:true});
-				} else if (chat_cha[0].get('controlledby') == "all" || chat_cha[0].get('controlledby').indexOf(msg.playerid) > -1 || playerIsGM(msg.playerid)) {
-					chat_cha = chat_cha[0];
-					const current_avatar = chat_cha.get('avatar');
-					if (msg.content.indexOf('https://') > -1) {
-						chat_cha.set('avatar', split[2]);
-						if (current_avatar == chat_cha.get('avatar')) {
-							sendChat("error", "/w \"" + msg.who + "\" **" + split[1] + "**의 아바타 이미지가 변경되지 않았습니다. 외부 링크를 사용했거나 올바르지 않은 주소인지 확인해주세요. *(이 안내메시지는 로그에 저장되지 않습니다.)*",null,{noarchive:true});
-						}
-					} else {
-						sendChat("error", "/w \"" + msg.who + "\" 주소형식이 올바르지 않습니다. *(이 안내메시지는 로그에 저장되지 않습니다.)*",null,{noarchive:true});
-					}
-				} else {
-					sendChat("error", "/w \"" + msg.who + "\" **" + split[1] + "** 캐릭터에 권한이 없습니다. *(이 안내메시지는 로그에 저장되지 않습니다.)*",null,{noarchive:true});
-				}
-			} catch (err) {
-				sendChat("error","/w gm " + err,null,{noarchive:true});
-			}
-		}
 		else     if (msg.content.indexOf("!flip") === 0 && msg.selected) {
 			try {
 				for (var i=0;i<msg.selected.length;i++) {
@@ -519,6 +495,39 @@ const aa_setting = {
 			} catch(err){
 				sendchat("error","/w gm "+err,null,{noarchive:true});
 			}
+		}
+		else 	if (msg.content.indexOf("!add") === 0) {
+			let tok = getObj("graphic", msg.selected[0]._id);
+			sendChat(msg.who,"/w gm "+tok.get('imgsrc'));
+		} else if (msg.content.indexOf("!replace ") === 0) {
+			let tok = getObj("graphic", msg.selected[0]._id);
+			tok.set('imgsrc',msg.content.substring(9).replace("max","thumb").replace("med","thumb"));
+		} else if (msg.content.indexOf("!log") === 0) {
+			for (let i=0;i<msg.selected.length;i++) {
+				let tok = getObj("graphic", msg.selected[i]._id);
+				log(tok);
+			}
+		} else if (msg.content.indexOf("!batch") === 0 && msg.selected.length > 0) {
+			let highest = getObj("graphic", msg.selected[0]._id);
+			for (let i=0;i<msg.selected.length;i++) {
+				let tok = getObj("graphic", msg.selected[i]._id);
+				if (highest.get('top') > tok.get('top')) {
+					highest = tok;
+				}
+			}
+			for (let i=0;i<msg.selected.length;i++) {
+				let tok = getObj("graphic", msg.selected[i]._id);
+				tok.set("imgsrc", highest.get('imgsrc').replace("max","thumb").replace("med","thumb"));
+			}
+		} else if (msg.content.indexOf("!highlight ") == 0) {
+			let tokens = findObjs({type:"graphic", name:msg.content.replace('!highlight ','')});
+			tokens.forEach(token => {
+				if (isNaN(parseInt(token.get('aura1_radius')))) {
+					token.set({aura1_radius:"1",aura1_color:gi_setting.aura_color,aura1_square:true});
+				} else {
+					token.set({aura1_radius:"",aura1_color:"",aura1_square:false});
+				}
+			});
 		}
 		else 	if (msg.content.indexOf("!amplify") === 0 && playerIsGM(msg.playerid)) { //명령어를 변경하실 수 있습니다.
 			try {
@@ -1524,7 +1533,36 @@ const aa_setting = {
 				sendChat('error','/w GM '+err,null,{noarchive:true});
 			}
 		}
+		else 	if (msg.content.indexOf("!avatar ") == 0) {
+			try {
+				let split = msg.content.split(/\s*--\s*/);
+				if (split.length != 3) {
+					sendChat("error", "/w \"" + msg.who + "\" 형식이 올바르지 않습니다. 아래의 형식으로 입력해주세요.<br>**!avatar --캐릭터이름 --주소**<br>*(이 안내메시지는 로그에 저장되지 않습니다.)*",null,{noarchive:true});
+					return;
+				}
+				let chat_cha = findObjs({ _type: 'character', name: split[1]});
+				if (chat_cha.length == 0) {
+					sendChat("error", "/w \"" + msg.who + "\" 이름이 **" + split[1] + "**인 캐릭터가 저널에 없습니다. *(이 안내메시지는 로그에 저장되지 않습니다.)*",null,{noarchive:true});
+				} else if (chat_cha[0].get('controlledby') == "all" || chat_cha[0].get('controlledby').indexOf(msg.playerid) > -1 || playerIsGM(msg.playerid)) {
+					chat_cha = chat_cha[0];
+					const current_avatar = chat_cha.get('avatar');
+					if (msg.content.indexOf('https://') > -1) {
+						chat_cha.set('avatar', split[2]);
+						if (current_avatar == chat_cha.get('avatar')) {
+							sendChat("error", "/w \"" + msg.who + "\" **" + split[1] + "**의 아바타 이미지가 변경되지 않았습니다. 외부 링크를 사용했거나 올바르지 않은 주소인지 확인해주세요. *(이 안내메시지는 로그에 저장되지 않습니다.)*",null,{noarchive:true});
+						}
+					} else {
+						sendChat("error", "/w \"" + msg.who + "\" 주소형식이 올바르지 않습니다. *(이 안내메시지는 로그에 저장되지 않습니다.)*",null,{noarchive:true});
+					}
+				} else {
+					sendChat("error", "/w \"" + msg.who + "\" **" + split[1] + "** 캐릭터에 권한이 없습니다. *(이 안내메시지는 로그에 저장되지 않습니다.)*",null,{noarchive:true});
+				}
+			} catch (err) {
+				sendChat("error","/w gm " + err,null,{noarchive:true});
+			}
+		}
 		
+	
 	
 	
 	
@@ -1675,5 +1713,13 @@ const aa_setting = {
 			arrangeStandings(false);
 		}
 	});
+	
+	
+	/* https://github.com/kibkibe
+	/* https://github.com/kibkibe
+	/* https://github.com/kibkibe
+	/* https://github.com/kibkibe
+	/* https://github.com/kibkibe
+	
 	
 	

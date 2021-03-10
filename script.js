@@ -144,7 +144,7 @@ const areaList = {
 		end_code: "});"
 	},
 	global_function:{
-		comment: "// define: global function",
+		comment: "define: global function",
 		start_code: "",
 		end_code: ""
 	}
@@ -307,6 +307,7 @@ function selectedScript(checkbox) {
 								}
 								opt_html += "</div>";
 								code += "// " + opt_desc.replace("\n","\n// ") + "\n" + opt_name + ": {" + opt_id + "}" + (j < part.length -1 ? ",\n":"};");
+
 							}
 							let opt_div = $("#"+script_name).siblings("div");
 							opt_div.css("display","block");
@@ -345,7 +346,7 @@ function selectedScript(checkbox) {
 }
 
 $(function() {
-	console.log("ver.25");
+	console.log("ver.26");
 
 	let listString = "";
 	for (let i = 0; i < menuMap.length; i++) {
