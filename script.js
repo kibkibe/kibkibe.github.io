@@ -108,7 +108,7 @@ $(function() {
 	$("#scriptList").html(listString);
 	
 	document.cookie = "it=is;test=text;";
-	console.log(document.cookie);
+	console.log(document.cookie + "?");
 
 	$(":checkbox").on("click",function(){
 		let checked = $(":checked");
