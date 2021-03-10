@@ -203,6 +203,7 @@ $(function() {
 	try {
 		if (document.cookie && document.cookie.length > 0) {
 			let str = document.cookie.split(";");
+			console.log(str);
 			options = JSON.parse(decodeURIComponent(str[0].replace('options=',"")));
 			checkedScripts = decodeURIComponent(str[1].replace('scripts=',"")).split("//");
 			for (let index = 0; index < checkedScripts.length; index++) {
