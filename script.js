@@ -193,6 +193,181 @@ function setCookie() {
 	}
 }
 
+function selectedScript(checkbox) {
+	console.log(checkbox);
+	let checked = $(".scriptList").filter(":checked");
+	if ($(checkbox).prop("checked") && checkedScripts.indexOf(checkbox.id) == -1) {
+		checkedScripts += "//" + event.currentTarget.id;
+	} else if (!$(checkbox).prop("checked")  && checkedScripts.indexOf(checkbox.id) > -1) {
+		checkedScripts = checkedScripts.replace("//"+checkbox.id,"");
+	}
+	let boxes = $(".scriptList").not(":checked");
+	for (let index = 0; index < boxes.length; index++) {
+		const element = boxes[index];
+		$(element).siblings("div").css("display","none")
+	}
+	let string = "";
+	const marker = "//codemarker::**::";
+	if (checked.length == 0) {
+		$('#result').html(string);
+	} else {
+		let loadedCount = 0;
+		// 각 영역에 해당할 코드를 집어넣을 서랍 생성
+		let contentList = {};
+		for (let index = 0; index < checked.length; index++) {
+			const element = checked[index];
+			if (!element.getAttribute("refurl")) {
+				console.log('일시적인 오류가 발생했습니다.');
+				return;
+			}
+			//string += "// " +element.getAttribute("refurl").substring(element.getAttribute("refurl").lastIndexOf("/")+1,
+			//element.getAttribute("refurl").length)+"\n";
+			jQuery.ajax({ 
+				url: element.getAttribute("refurl"), dataType: "text" 
+			}).done(function( responseTxt ) {
+				// 새 코드의 원본 획득
+				let script_info = responseTxt.match(/\(\w+\.js\) \d{6}/);
+				let script_name = "";
+				if (script_info) {
+					string += "// " + script_info[0] + "\n";
+					script_name = script_info[0].replace(/.js\) \d{6}/,"").replace("(","");
+				}
+
+				// 영역 서랍에 들어가야 할 항목 탐색
+				const keys = Object.keys(areaList);
+				for (let index = 0; index < keys.length; index++) {
+					let key = keys[index];
+					let area = areaList[key];
+					// 영역 서랍에 들어갈 항목 감지
+					if (responseTxt.indexOf(area.comment+"\n")>-1) {
+						// 영역서랍에 넣을 코드의 시작과 끝부분을 가져옴
+						let code = responseTxt.substring(
+							responseTxt.indexOf("// "+area.comment+"\n") + ("// "+area.comment+"\n").length,
+							responseTxt.indexOf("// /"+area.comment+"\n"));
+						// 현재 해당 서랍이 비어있을 경우 최초의 코드를 생성
+						let is_initial = false;
+						if (!contentList[key]) {
+							is_initial = true;
+							contentList[key] = "\n\n"+area.start_code
+							+ "\n"+marker.replace("**",area.comment)
+							+ "\n"+area.end_code;
+							// 현재 서랍에 부모 서랍이 있고 부모 서랍이 비어있는 경우 부모서랍의 최초의 코드를 생성
+							if (area.parents) {
+								if (contentList[area.parents]) {
+									contentList[area.parents] = contentList[area.parents].replace(marker.replace("**",areaList[area.parents].comment),
+									marker.replace("**",areaList[area.parents].comment)+ "\n"+marker.replace("**",area.comment));
+								} else {
+									contentList[area.parents] = "\n\n"+areaList[area.parents].start_code
+									+ "\n"+marker.replace("**",areaList[area.parents].comment)
+									+ "\n"+marker.replace("**",area.comment)
+									+ "\n\n"+areaList[area.parents].end_code;
+								}
+							}
+						} else if (key == 'global_constant') {
+							// 전역선언일 경우 중복항목 검사
+							const match = code.match(/const .*=.*;/g);
+							if (match) {
+								for (let j = 0; j < match.length; j++) {
+									let itm = match[j];
+									itm = itm.substring(0,itm.indexOf("="));
+									if (contentList[key].indexOf(itm) > -1) {
+										code = code.replace(match[j],'');
+									}
+								}
+							}
+						}
+						if (key == "option") {
+							// 주석이 있는 구획을 기준으로 분할
+							const part = code.split("// option: ");
+							let opt_html = "";
+							code = part[0].replace("\t","");
+
+							for (let j = 1; j < part.length; j++) {
+								let opt = "// " + part[j].replace(/\t/g,"");
+								let opt_value = opt.replace(/\/\/ .*/g,"").replace(/\n\n/g,"")
+								let opt_desc = opt.replace(opt_value,"").replace(/\/\/ /g,"");
+								let opt_name = opt_value.substring(0,opt_value.indexOf(":")).replace(/\s/g,"");
+								opt_value = opt_value.substring(opt_value.indexOf(':')+2,opt_value.length);
+								while (opt_value[opt_value.length-1] == "\t" || opt_value[opt_value.length-1] == ";" || opt_value[opt_value.length-1] == "}" ||
+								opt_value[opt_value.length-1] == "," || opt_value[opt_value.length-1] == "\n" || opt_value[opt_value.length-1] == " ") {
+									opt_value = opt_value.substring(0,opt_value.length-1);
+								}
+								const opt_id = script_name + "_" + opt_name;
+								if (options[opt_id]) {
+									opt_value = options[opt_id];
+								} else {
+									options[opt_id] = opt_value;
+								}
+								let html_desc = opt_desc;
+								const desc_match = html_desc.match(/https*:\/\/[^\s]+/);
+								if (desc_match) {
+									for (let k = 0; k < desc_match.length; k++) {
+										const mtch = desc_match[k];
+										html_desc = html_desc.replace(mtch,"<a href=\""+mtch+"\" target=_blank>[LINK]</a>");
+									}
+								}
+								opt_html += "<strong><span class=\"tree\">ㄴ</span> " + opt_name + "</strong><div class=\"opt-item\">"+ html_desc + "<br>";
+								if (opt_value == "true" || opt_value == "false") {
+									// boolean
+									opt_html += "<input id=\"" + opt_id + "\" type=\"checkbox\" class=\"optionCheck\""
+									+ "><label for=\"" + opt_id + "\" onClick=\"javascript:check(this)\"></label>";
+								} else if (opt_value[0] == "[" || opt_value[1] == "{") {
+									// object or array
+									opt_html += "<textarea onInput=\"javascript:setOption(this)\" id=\"" + opt_id + "\" class=\"input-text\">" + opt_value + "</textarea>";
+								} else {
+									// plain text
+									opt_html += "<input onInput=\"javascript:setOption(this)\" id=\""+ opt_id + "\" class=\"input-text\""
+									+ (opt_value[0] == "\"" && opt_value[opt_value.length-1] == "\"" ? " hasQuot":"") + "\" type=\"text\" value=\""
+									+ escapeQuot(opt_value) + "\">";
+								}
+								opt_html += "</div>";
+								// opt_id의 내용을 이후 쿠키에 저장된 옵션으로 치환
+								code += "// " + opt_desc.replace("\n","\n// ") + "\n" + opt_name + ": {" + opt_id + "}" + (j < part.length -1 ? ",\n":"};");
+							}
+							let opt_div = $("#"+script_name).siblings("div");
+							opt_div.css("display","block");
+							opt_div.html(opt_html);
+						}
+						// 최초코드의 내부에 영역서랍에 넣을 코드를 삽입
+						contentList[key] = contentList[key].replace(marker.replace("**",area.comment),
+							((area.parents && !is_initial) ? "else " : "") + code
+							+((area.parents && !is_initial) ? "" : "\n")+marker.replace("**",area.comment)+"\n");
+					}
+				}
+				loadedCount++;
+				// 모든 코드의 로드 및 가공 완료
+				if (loadedCount == checked.length) {
+					// 영역서랍의 내용들을 string에 하나로 취합
+					// 적용된 코드 목록을 최상단에 기재
+					for (let index = 0; index < keys.length; index++) {
+						let str = contentList[keys[index]];
+						// 콘텐츠가 비어있지 않은 경우 공백을 포함하여 finalString에 추가
+						if (str) {
+							const area = areaList[keys[index]];
+							// !!부모서랍과의 상하관계 적용
+							if (area.parents) {
+								string = string.replace(marker.replace("**",area.comment),str);
+							} else {
+								// 앵커로 사용된 comment를 삭제
+								string += str.replace(marker.replace("**",area.comment)+"\n","").replace(/\n+\t*\n+/g,"\n") + "\n\n";
+							}
+						}
+					}
+					string = string.replace(/\/\/codemarker::.*::/g,'');
+					// 취합한 내용을 textarea에 삽입
+					finalCodeWithoutOptions = string;
+					applyOptions();
+					let optionBoxes = $("input[class=optionCheck]");
+					for (let j = 0; j < optionBoxes.length; j++) {
+						const box = optionBoxes[j];
+						$(box).prop("checked", options[box.getAttribute("id")] == "true");
+					}
+				}
+			});
+		}
+	}
+}
+
 $(function() {
 	let listString = "";
 	for (let i = 0; i < menuMap.length; i++) {
@@ -205,7 +380,7 @@ $(function() {
 	$("#scriptList").html(listString);
 
 	// !!! TEST VERSION CODE !!!
-	console.log(20);
+	console.log(21);
 
 	try {
 		const temp = document.cookie;
@@ -223,8 +398,7 @@ $(function() {
 						console.log(split[index]);
 						if (index == split.length -1) {
 							console.log("triggered!");
-							console.log($("#"+split[index]));
-							$("#"+split[index]).trigger("click");
+							selectedScript($("#"+split[index]));
 						} else {
 							$("#"+split[index]).prop("checked",true);
 						}
@@ -240,179 +414,7 @@ $(function() {
 	}
 
 	$(".scriptList").on("click",function(event){
-		console.log(event);
-		let checked = $(".scriptList").filter(":checked");
-		const checkbox = event.currentTarget;
-		if ($(checkbox).prop("checked") && checkedScripts.indexOf(checkbox.id) == -1) {
-			checkedScripts += "//" + event.currentTarget.id;
-		} else if (!$(checkbox).prop("checked")  && checkedScripts.indexOf(checkbox.id) > -1) {
-			checkedScripts = checkedScripts.replace("//"+checkbox.id,"");
-		}
-		let boxes = $(".scriptList").not(":checked");
-		for (let index = 0; index < boxes.length; index++) {
-			const element = boxes[index];
-			$(element).siblings("div").css("display","none")
-		}
-		let string = "";
-		const marker = "//codemarker::**::";
-		if (checked.length == 0) {
-			$('#result').html(string);
-		} else {
-			let loadedCount = 0;
-			// 각 영역에 해당할 코드를 집어넣을 서랍 생성
-			let contentList = {};
-			for (let index = 0; index < checked.length; index++) {
-				const element = checked[index];
-				if (!element.getAttribute("refurl")) {
-					console.log('일시적인 오류가 발생했습니다.');
-					return;
-				}
-				//string += "// " +element.getAttribute("refurl").substring(element.getAttribute("refurl").lastIndexOf("/")+1,
-				//element.getAttribute("refurl").length)+"\n";
-				jQuery.ajax({ 
-					url: element.getAttribute("refurl"), dataType: "text" 
-				}).done(function( responseTxt ) {
-					// 새 코드의 원본 획득
-					let script_info = responseTxt.match(/\(\w+\.js\) \d{6}/);
-					let script_name = "";
-					if (script_info) {
-						string += "// " + script_info[0] + "\n";
-						script_name = script_info[0].replace(/.js\) \d{6}/,"").replace("(","");
-					}
-
-					// 영역 서랍에 들어가야 할 항목 탐색
-					const keys = Object.keys(areaList);
-					for (let index = 0; index < keys.length; index++) {
-						let key = keys[index];
-						let area = areaList[key];
-						// 영역 서랍에 들어갈 항목 감지
-						if (responseTxt.indexOf(area.comment+"\n")>-1) {
-							// 영역서랍에 넣을 코드의 시작과 끝부분을 가져옴
-							let code = responseTxt.substring(
-								responseTxt.indexOf("// "+area.comment+"\n") + ("// "+area.comment+"\n").length,
-								responseTxt.indexOf("// /"+area.comment+"\n"));
-							// 현재 해당 서랍이 비어있을 경우 최초의 코드를 생성
-							let is_initial = false;
-							if (!contentList[key]) {
-								is_initial = true;
-								contentList[key] = "\n\n"+area.start_code
-								+ "\n"+marker.replace("**",area.comment)
-								+ "\n"+area.end_code;
-								// 현재 서랍에 부모 서랍이 있고 부모 서랍이 비어있는 경우 부모서랍의 최초의 코드를 생성
-								if (area.parents) {
-									if (contentList[area.parents]) {
-										contentList[area.parents] = contentList[area.parents].replace(marker.replace("**",areaList[area.parents].comment),
-										marker.replace("**",areaList[area.parents].comment)+ "\n"+marker.replace("**",area.comment));
-									} else {
-										contentList[area.parents] = "\n\n"+areaList[area.parents].start_code
-										+ "\n"+marker.replace("**",areaList[area.parents].comment)
-										+ "\n"+marker.replace("**",area.comment)
-										+ "\n\n"+areaList[area.parents].end_code;
-									}
-								}
-							} else if (key == 'global_constant') {
-								// 전역선언일 경우 중복항목 검사
-								const match = code.match(/const .*=.*;/g);
-								if (match) {
-									for (let j = 0; j < match.length; j++) {
-										let itm = match[j];
-										itm = itm.substring(0,itm.indexOf("="));
-										if (contentList[key].indexOf(itm) > -1) {
-											code = code.replace(match[j],'');
-										}
-									}
-								}
-							}
-							if (key == "option") {
-								// 주석이 있는 구획을 기준으로 분할
-								const part = code.split("// option: ");
-								let opt_html = "";
-								code = part[0].replace("\t","");
-
-								for (let j = 1; j < part.length; j++) {
-									let opt = "// " + part[j].replace(/\t/g,"");
-									let opt_value = opt.replace(/\/\/ .*/g,"").replace(/\n\n/g,"")
-									let opt_desc = opt.replace(opt_value,"").replace(/\/\/ /g,"");
-									let opt_name = opt_value.substring(0,opt_value.indexOf(":")).replace(/\s/g,"");
-									opt_value = opt_value.substring(opt_value.indexOf(':')+2,opt_value.length);
-									while (opt_value[opt_value.length-1] == "\t" || opt_value[opt_value.length-1] == ";" || opt_value[opt_value.length-1] == "}" ||
-									opt_value[opt_value.length-1] == "," || opt_value[opt_value.length-1] == "\n" || opt_value[opt_value.length-1] == " ") {
-										opt_value = opt_value.substring(0,opt_value.length-1);
-									}
-									const opt_id = script_name + "_" + opt_name;
-									if (options[opt_id]) {
-										opt_value = options[opt_id];
-									} else {
-										options[opt_id] = opt_value;
-									}
-									let html_desc = opt_desc;
-									const desc_match = html_desc.match(/https*:\/\/[^\s]+/);
-									if (desc_match) {
-										for (let k = 0; k < desc_match.length; k++) {
-											const mtch = desc_match[k];
-											html_desc = html_desc.replace(mtch,"<a href=\""+mtch+"\" target=_blank>[LINK]</a>");
-										}
-									}
-									opt_html += "<strong><span class=\"tree\">ㄴ</span> " + opt_name + "</strong><div class=\"opt-item\">"+ html_desc + "<br>";
-									if (opt_value == "true" || opt_value == "false") {
-										// boolean
-										opt_html += "<input id=\"" + opt_id + "\" type=\"checkbox\" class=\"optionCheck\""
-										+ "><label for=\"" + opt_id + "\" onClick=\"javascript:check(this)\"></label>";
-									} else if (opt_value[0] == "[" || opt_value[1] == "{") {
-										// object or array
-										opt_html += "<textarea onInput=\"javascript:setOption(this)\" id=\"" + opt_id + "\" class=\"input-text\">" + opt_value + "</textarea>";
-									} else {
-										// plain text
-										opt_html += "<input onInput=\"javascript:setOption(this)\" id=\""+ opt_id + "\" class=\"input-text\""
-										+ (opt_value[0] == "\"" && opt_value[opt_value.length-1] == "\"" ? " hasQuot":"") + "\" type=\"text\" value=\""
-										+ escapeQuot(opt_value) + "\">";
-									}
-									opt_html += "</div>";
-									// opt_id의 내용을 이후 쿠키에 저장된 옵션으로 치환
-									code += "// " + opt_desc.replace("\n","\n// ") + "\n" + opt_name + ": {" + opt_id + "}" + (j < part.length -1 ? ",\n":"};");
-								}
-								let opt_div = $("#"+script_name).siblings("div");
-								opt_div.css("display","block");
-								opt_div.html(opt_html);
-							}
-							// 최초코드의 내부에 영역서랍에 넣을 코드를 삽입
-							contentList[key] = contentList[key].replace(marker.replace("**",area.comment),
-								((area.parents && !is_initial) ? "else " : "") + code
-								+((area.parents && !is_initial) ? "" : "\n")+marker.replace("**",area.comment)+"\n");
-						}
-					}
-					loadedCount++;
-					// 모든 코드의 로드 및 가공 완료
-					if (loadedCount == checked.length) {
-						// 영역서랍의 내용들을 string에 하나로 취합
-						// 적용된 코드 목록을 최상단에 기재
-						for (let index = 0; index < keys.length; index++) {
-							let str = contentList[keys[index]];
-							// 콘텐츠가 비어있지 않은 경우 공백을 포함하여 finalString에 추가
-							if (str) {
-								const area = areaList[keys[index]];
-								// !!부모서랍과의 상하관계 적용
-								if (area.parents) {
-									string = string.replace(marker.replace("**",area.comment),str);
-								} else {
-									// 앵커로 사용된 comment를 삭제
-									string += str.replace(marker.replace("**",area.comment)+"\n","").replace(/\n+\t*\n+/g,"\n") + "\n\n";
-								}
-							}
-						}
-						string = string.replace(/\/\/codemarker::.*::/g,'');
-						// 취합한 내용을 textarea에 삽입
-						finalCodeWithoutOptions = string;
-						applyOptions();
-						let optionBoxes = $("input[class=optionCheck]");
-						for (let j = 0; j < optionBoxes.length; j++) {
-							const box = optionBoxes[j];
-							$(box).prop("checked", options[box.getAttribute("id")] == "true");
-						}
-					}
-				});
-			}
-		}
+		selectedScript(event.currentTarget);
 	});
 	$(":button").on("click",function(){
 		const result = document.getElementById("result");
