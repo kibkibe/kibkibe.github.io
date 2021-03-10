@@ -200,13 +200,11 @@ $(function() {
 	}
 	$("#scriptList").html(listString);
 
-	console.log(1);
+	console.log(2);
 
 	try {
 		if (document.cookie && document.cookie.length > 0) {
 			let str = document.cookie.split(";");
-			console.log(str);
-
 			for (let index = 0; index < str.length; index++) {
 				const item = str[index];
 				if (item.indexOf("options=") == 0) {
@@ -218,6 +216,7 @@ $(function() {
 
 			for (let index = 0; index < checkedScripts.length; index++) {
 				const element = checkedScripts[index];
+				console.log(element);
 				$(element).prop("checked",true);
 			}
 		}
