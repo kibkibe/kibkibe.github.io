@@ -106,6 +106,9 @@ $(function() {
 		+ item.name + ".js</span><br>" + item.desc + "</label><div class=\"opt\" style=\"display:none\">설정가능한 옵션이 표시될 예정입니다.</div><p></p></li>";
 	}
 	$("#scriptList").html(listString);
+	
+	document.cookie = "it=is;test=text;";
+	console.log(document.cookie);
 
 	$(":checkbox").on("click",function(){
 		let checked = $(":checked");
