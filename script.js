@@ -380,7 +380,7 @@ $(function() {
 	$("#scriptList").html(listString);
 
 	// !!! TEST VERSION CODE !!!
-	console.log(22);
+	console.log(23);
 
 	try {
 		const temp = document.cookie;
@@ -402,12 +402,11 @@ $(function() {
 					}
 				}
 			}
-		} else {
-			console.log("쿠키가 왜 없어");
 		}
 	} catch (err) {
 		console.log(err);
-		document.cookie = "";
+		document.cookie = "scripts=expire;max-age=-1";
+		document.cookie = "options=expire;max-age=-1";
 	}
 
 	$(".scriptList").on("click",function(event){
