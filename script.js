@@ -184,7 +184,7 @@ function applyOptions() {
 
 function setCookie() {
 	if (Object.keys(options).length > 0) {
-		document.cookie = encodeURIComponent(JSON.stringify(options));
+		document.cookie = "options=" + encodeURIComponent(JSON.stringify(options));
 	}
 	if (checkedScripts.length > 0) {
 		document.cookie = "scripts=" + encodeURIComponent(checkedScripts);
@@ -205,7 +205,7 @@ $(function() {
 	$("#scriptList").html(listString);
 
 	// !!! TEST VERSION CODE !!!
-	console.log(17);
+	console.log(18);
 
 	try {
 		const temp = document.cookie;
