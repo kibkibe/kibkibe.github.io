@@ -200,7 +200,7 @@ $(function() {
 	}
 	$("#scriptList").html(listString);
 
-	console.log(3);
+	console.log(4);
 
 	try {
 		if (document.cookie && document.cookie.length > 0) {
@@ -217,6 +217,8 @@ $(function() {
 						console.log(element);
 						$(element).prop("checked",true);
 					}
+				} else {
+					console.log(item);
 				}
 			}
 		}
