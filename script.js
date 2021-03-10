@@ -201,7 +201,7 @@ $(function() {
 	$("#scriptList").html(listString);
 
 	// !!! TEST VERSION CODE !!!
-	console.log(9);
+	console.log(10);
 
 	try {
 		const temp = document.cookie;
@@ -216,6 +216,7 @@ $(function() {
 					checkedScripts = item.replace('scripts=',"");
 					const split = checkedScripts.split("//");
 					for (let index = 1; index < split.length; index++) {
+						console.log(split[index]);
 						$("#"+split[index]).prop("checked",true);
 					}
 				}
