@@ -184,7 +184,7 @@ function applyOptions() {
 
 function setCookie() {
 	if (Object.keys(options).length > 0) {
-		options = encodeURIComponent(JSON.stringify(options));
+		document.cookie = encodeURIComponent(JSON.stringify(options));
 	}
 	if (checkedScripts.length > 0) {
 		document.cookie = "scripts=" + encodeURIComponent(checkedScripts);
@@ -205,7 +205,7 @@ $(function() {
 	$("#scriptList").html(listString);
 
 	// !!! TEST VERSION CODE !!!
-	console.log(16);
+	console.log(17);
 
 	try {
 		const temp = document.cookie;
@@ -222,18 +222,16 @@ $(function() {
 					for (let index = 1; index < split.length; index++) {
 						console.log(split[index]);
 						if (index == split.length -1) {
+							console.log("triggered!");
 							$("#"+split[index]).trigger("click");
 						} else {
 							$("#"+split[index]).prop("checked",true);
 						}
 					}
-				} else {
-					console.log("이건/" + item + "/뭔데");
 				}
 			}
 		} else {
 			console.log("쿠키가 왜 없어");
-			console.log(temp);
 		}
 	} catch (err) {
 		console.log(err);
