@@ -200,7 +200,7 @@ $(function() {
 	}
 	$("#scriptList").html(listString);
 
-	console.log(7);
+	console.log(6);
 
 	try {
 		if (document.cookie && document.cookie.length > 0) {
