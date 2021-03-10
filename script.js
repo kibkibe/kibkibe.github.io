@@ -185,8 +185,7 @@ function applyOptions() {
 function setCookie() {
 	console.log("options=" + encodeURIComponent(JSON.stringify(options))
 	+ ";scripts=" + encodeURIComponent(checkedScripts));
-	document.cookie = "options=" + encodeURIComponent(JSON.stringify(options))
-	+ ";scripts=" + encodeURIComponent(checkedScripts);
+	document.cookie = "scripts=" + encodeURIComponent(checkedScripts);
 }
 
 $(function() {
@@ -205,7 +204,6 @@ $(function() {
 
 	try {
 		const temp = document.cookie;
-		//const temp = "options=%7B%22as_autofiller_master_name%22%3A%22%5C%22GM%5C%22%22%2C%22as_autofiller_use_to_playable_character%22%3A%22false%22%2C%22as_switcher_master_name%22%3A%22%5C%22GM%5C%22%22%7D;scripts=%2F%2Fas_autofiller%2F%2Fas_switcher";
 		if (temp && temp.length > 0) {
 			let str = temp.split(";");
 			console.log(temp);
