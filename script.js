@@ -204,8 +204,16 @@ $(function() {
 		if (document.cookie && document.cookie.length > 0) {
 			let str = document.cookie.split(";");
 			console.log(str);
-			options = JSON.parse(decodeURIComponent(str[0].replace('options=',"")));
-			checkedScripts = decodeURIComponent(str[1].replace('scripts=',"")).split("//");
+
+			for (let index = 0; index < str.length; index++) {
+				const item = str[index];
+				if (item.indexOf("options=") == 0) {
+					options = JSON.parse(decodeURIComponent(str[0].replace('options=',"")));
+				} else if (item.indexOf("scripts=") == 0) {
+					checkedScripts = decodeURIComponent(str[1].replace('scripts=',"")).split("//");
+				}
+			}
+
 			for (let index = 0; index < checkedScripts.length; index++) {
 				const element = checkedScripts[index];
 				$(element).prop("checked",true);
