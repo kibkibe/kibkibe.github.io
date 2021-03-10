@@ -205,7 +205,7 @@ $(function() {
 	$("#scriptList").html(listString);
 
 	// !!! TEST VERSION CODE !!!
-	console.log(14);
+	console.log(15);
 
 	try {
 		const temp = document.cookie;
@@ -221,7 +221,11 @@ $(function() {
 					const split = checkedScripts.split("//");
 					for (let index = 1; index < split.length; index++) {
 						console.log(split[index]);
-						$("#"+split[index]).prop("checked",true);
+						if (index == split.length -1) {
+							$("#"+split[index]).trigger("click");
+						} else {
+							$("#"+split[index]).prop("checked",true);
+						}
 					}
 				} else {
 					console.log("이건/" + item + "/뭔데");
