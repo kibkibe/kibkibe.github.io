@@ -200,6 +200,8 @@ $(function() {
 	}
 	$("#scriptList").html(listString);
 
+	console.log(1);
+
 	try {
 		if (document.cookie && document.cookie.length > 0) {
 			let str = document.cookie.split(";");
