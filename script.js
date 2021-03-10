@@ -200,14 +200,19 @@ $(function() {
 	}
 	$("#scriptList").html(listString);
 
-	if (document.cookie && document.cookie.length > 0) {
-		let str = document.cookie.split(";");
-		options = JSON.parse(decodeURIComponent(str[0].replace('options=',"")));
-		checkedScripts = decodeURIComponent(str[1].replace('scripts=',"")).split("//");
-		for (let index = 0; index < checkedScripts.length; index++) {
-			const element = checkedScripts[index];
-			$(element).prop("checked",true);
+	try {
+		if (document.cookie && document.cookie.length > 0) {
+			let str = document.cookie.split(";");
+			options = JSON.parse(decodeURIComponent(str[0].replace('options=',"")));
+			checkedScripts = decodeURIComponent(str[1].replace('scripts=',"")).split("//");
+			for (let index = 0; index < checkedScripts.length; index++) {
+				const element = checkedScripts[index];
+				$(element).prop("checked",true);
+			}
 		}
+	} catch (err) {
+		console.log(err);
+		document.cookie = "";
 	}
 
 	$(".scriptList").on("click",function(event){
