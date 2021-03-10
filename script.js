@@ -144,7 +144,7 @@ const areaList = {
 		end_code: "});"
 	},
 	global_function:{
-		comment: "// global function\ndefine: global function",
+		comment: "// define: global function",
 		start_code: "",
 		end_code: ""
 	}
@@ -200,7 +200,7 @@ $(function() {
 	}
 	$("#scriptList").html(listString);
 
-	console.log(4);
+	console.log(5);
 
 	try {
 		if (document.cookie && document.cookie.length > 0) {
