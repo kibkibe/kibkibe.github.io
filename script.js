@@ -200,17 +200,17 @@ $(function() {
 	}
 	$("#scriptList").html(listString);
 
-	console.log(5);
+	console.log(7);
 
 	try {
 		if (document.cookie && document.cookie.length > 0) {
-			let str = document.cookie.split(";");
+			let str = decodeURIComponent(document.cookie.split)(";");
 			for (let index = 0; index < str.length; index++) {
 				const item = str[index];
 				if (item.indexOf("options=") == 0) {
-					options = JSON.parse(decodeURIComponent(item.replace('options=',"")));
+					options = JSON.parse(item.replace('options=',""));
 				} else if (item.indexOf("scripts=") == 0) {
-					checkedScripts = decodeURIComponent(item.replace('scripts=',"")).split("//");
+					checkedScripts = item.replace('scripts=',"").split("//");
 					console.log(checkedScripts);
 					for (let index = 0; index < checkedScripts.length; index++) {
 						const element = checkedScripts[index];
@@ -264,7 +264,7 @@ $(function() {
 					let script_name = "";
 					if (script_info) {
 						string += "// " + script_info + "\n";
-						script_name = script_name[0].replace(/.js) \d{6}/,"").replace("(","");
+						script_name = script_info.replace(/.js) \d{6}/,"").replace("(","");
 					}
 
 					// 영역 서랍에 들어가야 할 항목 탐색
