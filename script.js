@@ -205,12 +205,12 @@ $(function() {
 	$("#scriptList").html(listString);
 
 	// !!! TEST VERSION CODE !!!
-	console.log(18);
+	console.log(19);
 
 	try {
 		const temp = document.cookie;
 		if (temp && temp.length > 0) {
-			let str = temp.split(";");
+			let str = temp.split(/\s*;\s*/);
 			console.log(temp);
 			for (let index = 0; index < str.length; index++) {
 				const item = decodeURIComponent(str[index]);
