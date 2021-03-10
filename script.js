@@ -199,6 +199,9 @@ $(function() {
 		+ item.name + ".js</span><br>" + item.desc + "</label><div class=\"opt\" style=\"display:none\"></div><p></p></li>";
 	}
 	$("#scriptList").html(listString);
+	
+	document.cookie = "it=is;test=text;";
+	console.log(document.cookie + "?");
 
 	if (document.cookie && document.cookie.length > 0) {
 		let str = document.cookie.split(";");
