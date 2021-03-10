@@ -200,7 +200,8 @@ $(function() {
 	}
 	$("#scriptList").html(listString);
 
-	console.log(6);
+	// !!! TEST VERSION CODE !!!
+	console.log(7);
 
 	try {
 		if (document.cookie && document.cookie.length > 0) {
@@ -264,7 +265,7 @@ $(function() {
 					let script_name = "";
 					if (script_info) {
 						string += "// " + script_info + "\n";
-						script_name = script_info.replace(/.js) \d{6}/,"").replace("(","");
+						script_name = script_info.replace(/.js\) \d{6}/,"").replace("(","");
 					}
 
 					// 영역 서랍에 들어가야 할 항목 탐색
