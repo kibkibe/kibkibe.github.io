@@ -351,7 +351,7 @@ function selectedScript(checkbox) {
 }
 
 $(function() {
-	console.log("ver.26");
+	console.log("ver.27");
 
 	let listString = "";
 	for (let i = 0; i < menuMap.length; i++) {
@@ -359,7 +359,8 @@ $(function() {
 		listString += "<li><input id=\"" + item.name + "\" refurl=\"https://raw.githubusercontent.com/kibkibe/roll20-api-scripts/master/"
 		+ (item.is_utility?"utilities":item.name) + "/" + item.name + ".js\" type=\"checkbox\" class=\"scriptList\"><label for=\""
 		+ item.name + "\"></label><label for=\"" + item.name + "\">" + "<span>"
-		+ item.name + ".js</span><br>" + item.desc + "</label><div class=\"opt\" style=\"display:none\"></div><p></p></li>";
+		+ item.name + ".js</span><a href=\"https://github.com/kibkibe/roll20-api-scripts/tree/master/" + (item.is_utility?"utilities":item.name)
+		+ "\" target=_blank title=\"해당 스크립트의 안내페이지로 이동합니다.\"><i class=\"fas fa-external-link-alt\"></i></a><br>" + item.desc + "</label><div class=\"opt\" style=\"display:none\"></div><p></p></li>";
 	}
 	$("#scriptList").html(listString);
 

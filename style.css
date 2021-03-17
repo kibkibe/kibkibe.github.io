@@ -66,8 +66,17 @@ label {
 	line-height: 1.5em;
 }
 label span {
-	color: #444444; font-size:1.5em;
+	color: #444444; font-size:1.5em; margin-right: 10px;
 }
+
+label i {
+	font-size: 1.3em;
+}
+label a {
+	text-decoration: none; color: #aaaaaa;
+}
+label a:hover { color: #666666;}
+
 .scriptList, .optionCheck {
 	vertical-align: top; display:none;
 }
