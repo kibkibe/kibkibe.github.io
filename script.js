@@ -134,13 +134,23 @@ const areaList = {
 		parents: "chat_message"
 	},
 	change_attribute:{
-		comment: "on.change:attribute",
-		start_code: "//on change attribute\non(\"change:attribute\", function(obj, prev) {",
+		comment: "on.change:card",
+		start_code: "//on change card\non(\"change:card\", function(obj, prev) {",
 		end_code: "});"
 	},
 	change_graphic:{
 		comment: "on.change:graphic",
 		start_code: "//on change graphic\non(\"change:graphic\", function(obj, prev) {",
+		end_code: "});"
+	},
+	change_attribute:{
+		comment: "on.change:attribute",
+		start_code: "//on change attribute\non(\"change:attribute\", function(obj, prev) {",
+		end_code: "});"
+	},
+	destroy_graphic:{
+		comment: "on.destroy:card",
+		start_code: "//on destroy card\non(\"destroy:card\", function(obj) {",
 		end_code: "});"
 	},
 	destroy_graphic:{
