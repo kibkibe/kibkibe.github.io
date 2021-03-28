@@ -359,6 +359,8 @@ function selectedScript(checkbox) {
 									+ "><label for=\"" + opt_id + "\" onClick=\"javascript:check(this)\"></label>";
 								} else if (opt_value[0] == "[" || opt_value[1] == "{" || opt_name == "check_list") {
 									if (opt_name == "check_list") {
+										console.log(3);
+										console.log(userCheckListHTML);
 										opt_html += (hasCookie ? userCheckListHTML.replace("적용할 코드를 선택하세요","직접 코드 입력") : userCheckListHTML);
 									}
 									opt_html += "<textarea onInput=\"javascript:setOption(this)\" id=\"" + opt_id + "\" class=\"input-text\""
@@ -446,6 +448,32 @@ $(function() {
 			userCheckListHTML += '<a onClick="selectRule(this)" class="checkItm" rownum=' + keys[index] + '>' + element.name + '</a>'
 		}
 		userCheckListHTML += '<a onClick="selectRule(this)" rownum=0 class="checkItm">직접 코드 입력</a></div></div>';
+
+		try {
+			const temp = document.cookie;
+			if (temp && temp.length > 0) {
+				let str = temp.split(/\s*;\s*/);
+				for (let index = 0; index < str.length; index++) {
+					const item = decodeURIComponent(str[index]);
+					if (item.indexOf("options=") == 0) {
+						options = JSON.parse(item.replace('options=',""));
+					} else if (item.indexOf("scripts=") == 0) {
+						checkedScripts = item.replace('scripts=',"");
+						const split = checkedScripts.split("//");
+						for (let index = 1; index < split.length; index++) {
+							$("#"+split[index]).prop("checked",true);
+							if (index == split.length -1) {
+								selectedScript($("#"+split[index]));
+							}
+						}
+					}
+				}
+			}
+		} catch (err) {
+			console.log(err);
+			document.cookie = "scripts=expire;max-age=-1";
+			document.cookie = "options=expire;max-age=-1";
+		}
 	});
 
 	let listString = "";
@@ -458,32 +486,6 @@ $(function() {
 		+ "\" target=_blank title=\"해당 스크립트의 안내페이지로 이동합니다.\"><i class=\"fas fa-external-link-alt\"></i></a><br>" + item.desc + "</label><div class=\"opt\" style=\"display:none\"></div><p></p></li>";
 	}
 	$("#scriptList").html(listString);
-
-	try {
-		const temp = document.cookie;
-		if (temp && temp.length > 0) {
-			let str = temp.split(/\s*;\s*/);
-			for (let index = 0; index < str.length; index++) {
-				const item = decodeURIComponent(str[index]);
-				if (item.indexOf("options=") == 0) {
-					options = JSON.parse(item.replace('options=',""));
-				} else if (item.indexOf("scripts=") == 0) {
-					checkedScripts = item.replace('scripts=',"");
-					const split = checkedScripts.split("//");
-					for (let index = 1; index < split.length; index++) {
-						$("#"+split[index]).prop("checked",true);
-						if (index == split.length -1) {
-							selectedScript($("#"+split[index]));
-						}
-					}
-				}
-			}
-		}
-	} catch (err) {
-		console.log(err);
-		document.cookie = "scripts=expire;max-age=-1";
-		document.cookie = "options=expire;max-age=-1";
-	}
 
 	$(".scriptList").on("click",function(event){
 		selectedScript(event.currentTarget);
