@@ -34,11 +34,11 @@ background: #eeeeee;
 #result::-webkit-scrollbar-track, textarea::-webkit-scrollbar-track {
 background: #ffffff;
 }
-textarea { resize:none;}
+textarea { resize:none; }
 #result {
 	border: 0px; width: -moz-calc(100% - 40px); width: -webkit-calc(100% - 40px); width: -o-calc(100% - 40px); width: calc(100% - 40px);
 	padding: 20px; height: -moz-calc(100% - 95px); height: -webkit-calc(100% - 95px); height: -o-calc(100% - 95px); height: calc(100% - 95px);
-	font-family: 'Poppins', sans-serif;}
+	font-family: 'Poppins', sans-serif; font-size: 13px;}
 #copyBtn {display:block;width:100%;margin:0px;height:50px;border:0px;background-color: #444444;color:#ffffff;font-size:1.1em;font-family: 'Poppins', sans-serif;}
 
 #copy {display:block;position:absolute;left:60px;top:17px;}
@@ -82,16 +82,20 @@ label a:hover { color: #666666;}
 }
 
 textarea[class=input-text] { height: 60px; max-width: 600px;}
-input[class=input-text] { max-width: 300px;}
-.input-text { background:#ffffff; border: 2px solid #bcbcbc; color: #444444; height: 30px; width: 100%; margin-top: 6px; font-family: 'Poppins', sans-serif; }
-.input-text:focus { outline: 1px solid #444444; border: 2px solid #444444; }
-.input-text:focus { outline: none; }
+input[class=input-text], #checkList { max-width: 300px;}
+.input-text, #checkList { background:#ffffff; border: 2px solid #bcbcbc; padding-left:7px; font-size: 13px;
+	text-align: left; color: #444444; height: 30px; width: 100%; margin-top: 6px; font-family: 'Poppins', sans-serif; }
+.input-text:focus, .focussed { outline: 1px solid #444444 !important; border: 2px solid #444444 !important; }
+.input-text:focus, .focussed { outline: none !important; }
+#checkList {height:20px;padding: 6px 7px 6px 7px; display: table;}
+#ruleName { display: table-cell;}
+#ruleArrow {display: table-cell; text-align:right;}
 
 .opt-item label { margin-top: 6px;}
 
 input + label {
 	display: inline-block; width: 17px; height: 17px; border: 2px solid #bcbcbc; cursor: pointer;
-	vertical-align: top;margin-right:17px;text-align:center; background: #ffffff; font-size: 13px;
+	vertical-align: top;margin-right:17px;text-align:center; background: #ffffff;
 }
 input:checked + label {
 	border: 2px solid #444444;
@@ -123,9 +127,40 @@ input:checked + label::after {
 	margin-left: 20px; line-break: anywhere;
 	width: -moz-calc(100% - 40px); width: -webkit-calc(100% - 40px); width: -o-calc(100% - 40px); width: calc(100% - 40px);
 }
-.opt-item a { text-decoration: none; color: #888888; font-weight: 600; }
+.opt-item a { text-decoration: none; color: #888888; }
 .opt-item a:hover { text-decoration: none; color: #aaaaaa; }
 
 .tree {
 	font-size: 20px; font-weight: 400;
 }
+
+.dropbtn:hover, .dropbtn:focus {
+	background-color: #2980B9;
+}
+
+.dropdown {
+	position: relative;
+	display: block;
+}
+
+.dropdown-content {
+	display: none;
+	position: absolute;
+	background-color: #ffffff;
+	min-width: 316px;
+	overflow: auto;
+	max-height: 400px;
+	box-shadow: 0px 4px 8px 0px rgba(0,0,0,0.2);
+	z-index: 1;
+    margin: 2px;
+}
+
+.dropdown-content a {
+	padding: 12px 7px 12px 7px;
+	text-decoration: none;
+	display: block;
+}
+
+.dropdown a:hover {background-color: #888; color:#ffffff}
+
+.show {display: block;}

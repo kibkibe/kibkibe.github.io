@@ -168,6 +168,8 @@ const areaList = {
 let finalCodeWithoutOptions = "";
 let options = {};
 let checkedScripts = "";
+let userCheckListJSON = {};
+let userCheckListHTML = "";
 
 function escapeQuot(str) {
 	return str.replace(/"/g,"&quot;");
@@ -208,7 +210,47 @@ function setCookie() {
 	}
 }
 
+$(document).click(function(event) { 
+	var $target = $(event.target);
+	if(!$target.closest('#checkList').length && 
+	$('#myDropdown').is(":visible")) {
+		$("#myDropdown").css("display","none");
+		$("#checkList").removeClass('focussed');
+		$("#ruleArrow").removeClass("fa-chevron-up");
+		$("#ruleArrow").addClass("fa-chevron-down");
+	}        
+  });
+
+function showHideDropbox() {
+	if ($("#myDropdown").css("display") == "none") {
+		$("#myDropdown").css("display","block");
+		$("#checkList").addClass("focussed");
+		$("#ruleArrow").removeClass("fa-chevron-down");
+		$("#ruleArrow").addClass("fa-chevron-up");
+	} else {
+		$("#myDropdown").css("display","none");
+		$("#checkList").removeClass('focussed');
+		$("#ruleArrow").removeClass("fa-chevron-up");
+		$("#ruleArrow").addClass("fa-chevron-down");
+	}
+}
+
+function selectRule(obj) {
+
+	if (obj.getAttribute('rownum') == 0) {
+		$("#attribute_tracker_check_list").css("display","block");
+		$("#attribute_tracker_check_list").val('[{attr: "", name: "", is_static_name: true, is_static_attr: true},\
+		{attr: "", name: "", is_static_name: true, is_static_attr: true}]');
+	} else {
+		$("#attribute_tracker_check_list").css("display","none");
+		$("#attribute_tracker_check_list").val(userCheckListJSON[obj.getAttribute('rownum')]['code']);
+	}
+	$("#ruleName").html(obj.innerHTML);
+	setOption(document.getElementById("attribute_tracker_check_list"));
+}
+
 function selectedScript(checkbox) {
+	
 	let checked = $(".scriptList").filter(":checked");
 	if ($(checkbox).prop("checked") && checkedScripts.indexOf(checkbox.id) == -1) {
 		checkedScripts += "//" + checkbox.id;
@@ -286,7 +328,7 @@ function selectedScript(checkbox) {
 							code = part[0].replace("\t","");
 
 							for (let j = 1; j < part.length; j++) {
-								let opt = "// " + part[j].replace(/\t/g,"");
+								let opt = "// " + part[j].replace(/\t/g,"").replace(/\/\/ \*\*.+\*\*/g,"");
 								let opt_value = opt.replace(/\/\/ .*/g,"").replace(/\n\n/g,"")
 								let opt_desc = opt.replace(opt_value,"").replace(/\/\/ /g,"");
 								let opt_name = opt_value.substring(0,opt_value.indexOf(":")).replace(/\s/g,"");
@@ -296,7 +338,9 @@ function selectedScript(checkbox) {
 									opt_value = opt_value.substring(0,opt_value.length-1);
 								}
 								const opt_id = script_name + "_" + opt_name;
+								let hasCookie = false;
 								if (options[opt_id]) {
+									hasCookie = true;
 									opt_value = options[opt_id];
 								} else {
 									options[opt_id] = opt_value;
@@ -313,8 +357,12 @@ function selectedScript(checkbox) {
 								if (opt_value == "true" || opt_value == "false") {
 									opt_html += "<input id=\"" + opt_id + "\" type=\"checkbox\" class=\"optionCheck\""
 									+ "><label for=\"" + opt_id + "\" onClick=\"javascript:check(this)\"></label>";
-								} else if (opt_value[0] == "[" || opt_value[1] == "{") {
-									opt_html += "<textarea onInput=\"javascript:setOption(this)\" id=\"" + opt_id + "\" class=\"input-text\">" + opt_value + "</textarea>";
+								} else if (opt_value[0] == "[" || opt_value[1] == "{" || opt_name == "check_list") {
+									if (opt_name == "check_list") {
+										opt_html += (hasCookie ? userCheckListHTML.replace("적용할 코드를 선택하세요","직접 코드 입력") : userCheckListHTML);
+									}
+									opt_html += "<textarea onInput=\"javascript:setOption(this)\" id=\"" + opt_id + "\" class=\"input-text\""
+									+ ((opt_name == "check_list" && !hasCookie) ? " style=\"display:none\"" : "") + ">" + opt_value + "</textarea>";
 								} else {
 									opt_html += "<input onInput=\"javascript:setOption(this)\" id=\""+ opt_id + "\" class=\"input-text\""
 									+ (opt_value[0] == "\"" && opt_value[opt_value.length-1] == "\"" ? " hasQuot":"") + "\" type=\"text\" value=\""
@@ -361,7 +409,44 @@ function selectedScript(checkbox) {
 }
 
 $(function() {
-	console.log("ver.27");
+	console.log("ver.28");
+
+	jQuery.ajax({ 
+		url: "https://spreadsheets.google.com/feeds/cells/1_uTqPs6FQJfjzDotRWqtJn8U6cVw_lVycDRal8vxZb8/1/public/values?alt=json-in-script&callback=doData",
+		dataType: "html",
+		error: function(jqXHR, textStatus, errorThrown) {
+			alert('Error: ' + textStatus + ' ' + errorThrown);
+	  }
+	}).done(function(textData) {
+		let trim = textData.substring(textData.indexOf("{"),textData.length);
+		trim = trim.substring(0,trim.lastIndexOf(");"));
+		const data = JSON.parse(trim);
+		const source = data.feed.entry;
+		for (let index = 0; index < source.length; index++) {
+			const orig_data = source[index]['gs$cell'];
+			let obj = {};
+			if (parseInt(orig_data.row) > 3) {
+				if (userCheckListJSON.hasOwnProperty(orig_data.row)) {
+					obj = userCheckListJSON[orig_data.row];
+				}
+				if (orig_data.col == "2") {
+					obj.name = orig_data['$t'];
+				} else if (orig_data.col == "3") {
+					obj.code = orig_data['$t'];
+				}
+				userCheckListJSON[orig_data.row] = obj;
+			}
+		}
+		const keys = Object.keys(userCheckListJSON);
+		userCheckListHTML += '<div class="dropdown">'
+		+ '<a id="checkList" onClick="showHideDropbox()" class="dropbtn"><div id="ruleName">적용할 코드를 선택하세요</div><i id="ruleArrow" class="fas fa-chevron-down"></i></a>'
+		+ '<div id="myDropdown" class="dropdown-content">';
+		for (let index = 0; index < keys.length; index++) {
+			const element = userCheckListJSON[keys[index]];
+			userCheckListHTML += '<a onClick="selectRule(this)" class="checkItm" rownum=' + keys[index] + '>' + element.name + '</a>'
+		}
+		userCheckListHTML += '<a onClick="selectRule(this)" rownum=0 class="checkItm">직접 코드 입력</a></div></div>';
+	});
 
 	let listString = "";
 	for (let i = 0; i < menuMap.length; i++) {
@@ -403,10 +488,10 @@ $(function() {
 	$(".scriptList").on("click",function(event){
 		selectedScript(event.currentTarget);
 	});
-	$(":button").on("click",function(){
+	$("#copy").on("click",function(){
 		const result = document.getElementById("result");
 		result.select();
 		result.setSelectionRange(0, result.value.length);
 		document.execCommand("copy");
-	})
+	});
 });
