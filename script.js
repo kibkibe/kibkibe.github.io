@@ -489,7 +489,7 @@ $(function() {
 	$(".scriptList").on("click",function(event){
 		selectedScript(event.currentTarget);
 	});
-	$("#copy").on("click",function(){
+	$("#copyBtn").on("click",function(){
 		const result = document.getElementById("result");
 		result.select();
 		result.setSelectionRange(0, result.value.length);
