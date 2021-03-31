@@ -281,7 +281,7 @@ function selectedScript(checkbox) {
 				let script_info = responseTxt.match(/\(\w+\.js\) \d{6}/);
 				let script_name = "";
 				if (script_info) {
-					string += "// " + script_info[0] + "\n";
+					string += "// " + script_info[0] + "\n// 도움말: " + responseTxt.split("\n")[0].replace('/*','').replace('*/','') + "\n";
 					script_name = script_info[0].replace(/.js\) \d{6}/,"").replace("(","");
 				}
 
@@ -329,12 +329,13 @@ function selectedScript(checkbox) {
 
 							for (let j = 1; j < part.length; j++) {
 								let opt = "// " + part[j].replace(/\t/g,"").replace(/\/\/ \*\*.+\*\*/g,"");
-								let opt_value = opt.replace(/\/\/ .*/g,"").replace(/\n\n/g,"")
+								let opt_value = opt.replace(/\/\/ .*/g,"").replace(/\n\n/g,"");
 								let opt_desc = opt.replace(opt_value,"").replace(/\/\/ /g,"");
 								let opt_name = opt_value.substring(0,opt_value.indexOf(":")).replace(/\s/g,"");
 								opt_value = opt_value.substring(opt_value.indexOf(':')+2,opt_value.length);
-								while (opt_value[opt_value.length-1] == "\t" || opt_value[opt_value.length-1] == ";" || opt_value[opt_value.length-1] == "}" ||
-								opt_value[opt_value.length-1] == "," || opt_value[opt_value.length-1] == "\n" || opt_value[opt_value.length-1] == " ") {
+								while (opt_value[opt_value.length-1] == "\t" || opt_value[opt_value.length-1] == ";" || 
+								opt_value[opt_value.length-1] == "," || opt_value[opt_value.length-1] == "\n" || opt_value[opt_value.length-1] == " " ||
+								(opt_value[opt_value.length-1] == "}" && (opt_value.match("{")||[]).length < (opt_value.match("}")||[]).length)) {
 									opt_value = opt_value.substring(0,opt_value.length-1);
 								}
 								const opt_id = script_name + "_" + opt_name;
@@ -359,8 +360,6 @@ function selectedScript(checkbox) {
 									+ "><label for=\"" + opt_id + "\" onClick=\"javascript:check(this)\"></label>";
 								} else if (opt_value[0] == "[" || opt_value[1] == "{" || opt_name == "check_list") {
 									if (opt_name == "check_list") {
-										console.log(3);
-										console.log(userCheckListHTML);
 										opt_html += (hasCookie ? userCheckListHTML.replace("적용할 코드를 선택하세요","직접 코드 입력") : userCheckListHTML);
 									}
 									opt_html += "<textarea onInput=\"javascript:setOption(this)\" id=\"" + opt_id + "\" class=\"input-text\""
