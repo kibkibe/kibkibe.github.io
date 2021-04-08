@@ -133,7 +133,7 @@ const areaList = {
 		end_code: "}",
 		parents: "chat_message"
 	},
-	change_attribute:{
+	change_card:{
 		comment: "on.change:card",
 		start_code: "//on change card\non(\"change:card\", function(obj, prev) {",
 		end_code: "});"
@@ -148,7 +148,7 @@ const areaList = {
 		start_code: "//on change attribute\non(\"change:attribute\", function(obj, prev) {",
 		end_code: "});"
 	},
-	destroy_graphic:{
+	destroy_card:{
 		comment: "on.destroy:card",
 		start_code: "//on destroy card\non(\"destroy:card\", function(obj) {",
 		end_code: "});"
