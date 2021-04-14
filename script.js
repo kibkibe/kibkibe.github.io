@@ -55,6 +55,11 @@ const menuMap = [
 		desc:"Roll20에서 루비 문자 입력을 구현해주는 스크립트입니다."
 	},
 	{
+		name: "simple_desc",
+		is_utility: true,
+		desc:"/desc 명령어를 더 간소하게 사용할 수 있도록 도와주는 스크립트입니다."
+	},
+	{
 		name: "smallchat",
 		is_utility: false,
 		desc:"채팅창에 게임 진행내용보다 상대적으로 덜 눈에 띄는 서식으로 잡담을 표시 해주는 기능입니다."
