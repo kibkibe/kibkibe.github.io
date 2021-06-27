@@ -148,7 +148,7 @@ const areaList = {
 		start_code: "//on change graphic\non(\"change:graphic\", function(obj, prev) {",
 		end_code: "});"
 	},
-	change_graphic:{
+	change_graphic_bar1_value:{
 		comment: "on.change:graphic:bar1_value",
 		start_code: "//on change graphic\non(\"change:graphic:bar1_value\", function(obj, prev) {",
 		end_code: "});"
