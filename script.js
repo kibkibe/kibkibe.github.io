@@ -80,6 +80,11 @@ const menuMap = [
 		desc:"토큰을 특정한 위치에 이동시키면 지정된 메시지를 표시해주는 스크립트입니다."
 	},
 	{
+		name: "token_connector",
+		is_utility: false,
+		desc:"토큰을 선택하고 명령어를 입력하면 특정 캐릭터의 스테이터스와 연결해주는 스크립트입니다."
+	},
+	{
 		name: "visual_dialogue",
 		is_utility: false,
 		desc:"비주얼노벨 스타일의 채팅 화면을 구현해주는 스크립트입니다."
